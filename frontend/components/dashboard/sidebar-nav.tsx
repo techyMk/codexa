@@ -2,10 +2,39 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import type { LucideIcon } from "lucide-react";
+import {
+  Home,
+  LayoutDashboard,
+  GitPullRequest,
+  Settings,
+  type LucideIcon,
+} from "lucide-react";
 import { cn } from "@/lib/utils";
 
-export function SidebarNavItem({
+/**
+ * Full sidebar navigation. Server-rendered layouts can't pass icon components
+ * across the boundary, so all items + icons are co-located in this client file.
+ */
+export function SidebarNav() {
+  return (
+    <>
+      <SidebarNavItem href="/" icon={Home} exact>
+        Home
+      </SidebarNavItem>
+      <SidebarNavItem href="/dashboard" icon={LayoutDashboard} exact>
+        Overview
+      </SidebarNavItem>
+      <SidebarNavItem href="/dashboard/reviews" icon={GitPullRequest}>
+        Reviews
+      </SidebarNavItem>
+      <SidebarNavItem href="/dashboard/settings" icon={Settings}>
+        Settings
+      </SidebarNavItem>
+    </>
+  );
+}
+
+function SidebarNavItem({
   href,
   icon: Icon,
   exact = false,

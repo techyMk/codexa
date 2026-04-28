@@ -1,8 +1,8 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import { LayoutDashboard, GitPullRequest, Settings, LogOut, Home } from "lucide-react";
+import { LogOut } from "lucide-react";
 import { Logo } from "@/components/brand";
-import { SidebarNavItem } from "@/components/dashboard/sidebar-nav";
+import { SidebarNav } from "@/components/dashboard/sidebar-nav";
 import { createClient } from "@/lib/supabase/server";
 
 export default async function Layout({ children }: { children: React.ReactNode }) {
@@ -27,10 +27,7 @@ export default async function Layout({ children }: { children: React.ReactNode }
         </div>
 
         <nav className="px-3 flex-1 space-y-1">
-          <SidebarNavItem href="/" icon={Home} exact>Home</SidebarNavItem>
-          <SidebarNavItem href="/dashboard" icon={LayoutDashboard} exact>Overview</SidebarNavItem>
-          <SidebarNavItem href="/dashboard/reviews" icon={GitPullRequest}>Reviews</SidebarNavItem>
-          <SidebarNavItem href="/dashboard/settings" icon={Settings}>Settings</SidebarNavItem>
+          <SidebarNav />
         </nav>
 
         <div className="p-3 border-t border-border/40">

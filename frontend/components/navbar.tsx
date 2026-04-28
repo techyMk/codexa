@@ -21,23 +21,64 @@ import { createClient } from "@/lib/supabase/client";
 
 export function Navbar() {
   const [scrolled, setScrolled] = useState(false);
+  const [activeAnchor, setActiveAnchor] = useState<string | null>(null);
   const { user, loading } = useUser();
   const pathname = usePathname();
 
-  function navLinkCls(href: string) {
-    const noActive = href.startsWith("http") || href.includes("#");
-    const isHome = href === "/";
-    const active = noActive
-      ? false
-      : isHome
-        ? pathname === "/"
-        : pathname === href || pathname.startsWith(href + "/");
+  // Scroll-spy for the landing-page section anchors (Features, How it works)
+  useEffect(() => {
+    if (pathname !== "/") {
+      setActiveAnchor(null);
+      return;
+    }
 
+    const sectionIds = ["features", "how-it-works"];
+    const elements = sectionIds
+      .map((id) => document.getElementById(id))
+      .filter((el): el is HTMLElement => el !== null);
+
+    if (elements.length === 0) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const visible = entries
+          .filter((e) => e.isIntersecting)
+          .sort(
+            (a, b) =>
+              (a.target as HTMLElement).offsetTop -
+              (b.target as HTMLElement).offsetTop,
+          );
+        setActiveAnchor(visible.length > 0 ? visible[0].target.id : null);
+      },
+      { rootMargin: "-35% 0px -55% 0px", threshold: 0 },
+    );
+
+    elements.forEach((el) => observer.observe(el));
+    return () => observer.disconnect();
+  }, [pathname]);
+
+  function isActive(href: string): boolean {
+    if (href.startsWith("http")) return false;
+    if (href.includes("#")) {
+      if (pathname !== "/") return false;
+      const anchor = href.split("#")[1];
+      return activeAnchor === anchor;
+    }
+    if (href === "/") return pathname === "/" && activeAnchor === null;
+    return pathname === href || pathname.startsWith(href + "/");
+  }
+
+  function navLinkCls(href: string, extra = ""): string {
+    const active = isActive(href);
     return cn(
-      "relative transition-colors",
+      "relative py-1.5 transition-colors duration-200",
+      "after:pointer-events-none after:absolute after:left-0 after:right-0 after:-bottom-0.5 after:h-0.5",
+      "after:rounded-full after:bg-gradient-to-r after:from-violet-500 after:to-blue-500",
+      "after:transition-all after:duration-300 after:ease-out after:origin-center",
       active
-        ? "text-foreground font-medium after:absolute after:-bottom-1.5 after:left-0 after:right-0 after:h-0.5 after:rounded-full after:bg-gradient-to-r after:from-violet-500 after:to-blue-500"
-        : "hover:text-foreground",
+        ? "text-foreground font-medium after:opacity-100 after:scale-x-100"
+        : "hover:text-foreground after:opacity-0 after:scale-x-50",
+      extra,
     );
   }
 
@@ -76,7 +117,7 @@ export function Navbar() {
             href={GITHUB_REPO_URL}
             target="_blank"
             rel="noopener"
-            className={cn(navLinkCls(GITHUB_REPO_URL), "flex items-center gap-1.5")}
+            className={navLinkCls(GITHUB_REPO_URL, "flex items-center gap-1.5")}
           >
             <Github className="h-4 w-4" /> GitHub
           </Link>
