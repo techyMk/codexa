@@ -54,6 +54,7 @@ export default function Page() {
         eyebrow="Documentation"
         title="Codexa Docs"
         summary="Everything you need to install Codexa, configure reviews, and run it on your own infrastructure."
+        showBack={false}
       />
 
       <P className="mt-6">

@@ -71,6 +71,20 @@ export default function Page() {
         the GitHub repo if you want them purged.
       </P>
 
+      <H2>Codexa stopped posting status checks after I added the feature</H2>
+      <P>
+        Self-hosted Codexa: when you added the Checks API integration, you also had to update the
+        GitHub App permission to <strong className="text-foreground">Checks: Read and write</strong>
+        AND accept the new permission on each existing install. Go to GitHub →{" "}
+        <strong className="text-foreground">Settings → Applications → Installed GitHub Apps</strong>{" "}
+        → click <strong className="text-foreground">Configure</strong> on your app → look for the
+        yellow &quot;Review permissions&quot; banner. See{" "}
+        <Link href="/docs/self-host" className="text-primary hover:underline">
+          self-hosting → Updating GitHub App permissions
+        </Link>{" "}
+        for the full flow.
+      </P>
+
       <H2>I want to contribute / report a bug</H2>
       <P>
         Codexa is open source. Open an issue or PR on{" "}

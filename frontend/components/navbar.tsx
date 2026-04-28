@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import {
   Github,
@@ -21,6 +22,24 @@ import { createClient } from "@/lib/supabase/client";
 export function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const { user, loading } = useUser();
+  const pathname = usePathname();
+
+  function navLinkCls(href: string) {
+    const noActive = href.startsWith("http") || href.includes("#");
+    const isHome = href === "/";
+    const active = noActive
+      ? false
+      : isHome
+        ? pathname === "/"
+        : pathname === href || pathname.startsWith(href + "/");
+
+    return cn(
+      "relative transition-colors",
+      active
+        ? "text-foreground font-medium after:absolute after:-bottom-1.5 after:left-0 after:right-0 after:h-0.5 after:rounded-full after:bg-gradient-to-r after:from-violet-500 after:to-blue-500"
+        : "hover:text-foreground",
+    );
+  }
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 8);
@@ -38,16 +57,18 @@ export function Navbar() {
           : "bg-transparent",
       )}
     >
-      <div className="container flex h-16 items-center justify-between">
+      <div className="container flex h-20 items-center justify-between">
         <Link href="/" className="flex items-center group" aria-label="Codexa home">
-          <Logo width={140} priority className="transition-transform group-hover:scale-[1.02]" />
+          <Logo width={170} priority className="transition-transform group-hover:scale-[1.02]" />
         </Link>
 
-        <nav className="hidden md:flex items-center gap-8 text-sm text-muted-foreground">
-          <Link href="/#features" className="hover:text-foreground transition-colors">Features</Link>
-          <Link href="/#how-it-works" className="hover:text-foreground transition-colors">How it works</Link>
+        <nav className="hidden md:flex items-center gap-7 text-sm text-muted-foreground">
+          <Link href="/" className={navLinkCls("/")}>Home</Link>
+          <Link href="/#features" className={navLinkCls("/#features")}>Features</Link>
+          <Link href="/#how-it-works" className={navLinkCls("/#how-it-works")}>How it works</Link>
+          <Link href="/docs" className={navLinkCls("/docs")}>Docs</Link>
           {user && (
-            <Link href="/dashboard" className="hover:text-foreground transition-colors">
+            <Link href="/dashboard" className={navLinkCls("/dashboard")}>
               Dashboard
             </Link>
           )}
@@ -55,7 +76,7 @@ export function Navbar() {
             href={GITHUB_REPO_URL}
             target="_blank"
             rel="noopener"
-            className="hover:text-foreground transition-colors flex items-center gap-1.5"
+            className={cn(navLinkCls(GITHUB_REPO_URL), "flex items-center gap-1.5")}
           >
             <Github className="h-4 w-4" /> GitHub
           </Link>

@@ -1,8 +1,29 @@
+import Link from "next/link";
+import { ArrowLeft } from "lucide-react";
 import { cn } from "@/lib/utils";
 
-export function DocHeader({ eyebrow, title, summary }: { eyebrow: string; title: string; summary: string }) {
+export function DocHeader({
+  eyebrow,
+  title,
+  summary,
+  showBack = true,
+}: {
+  eyebrow: string;
+  title: string;
+  summary: string;
+  showBack?: boolean;
+}) {
   return (
     <header className="pb-6 border-b border-border/40">
+      {showBack && (
+        <Link
+          href="/docs"
+          className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors mb-6 group"
+        >
+          <ArrowLeft className="h-4 w-4 group-hover:-translate-x-0.5 transition-transform" />
+          Back to Docs
+        </Link>
+      )}
       <p className="text-xs font-mono uppercase tracking-wider text-muted-foreground mb-2">
         {eyebrow}
       </p>

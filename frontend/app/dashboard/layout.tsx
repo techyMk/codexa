@@ -2,6 +2,7 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { LayoutDashboard, GitPullRequest, Settings, LogOut, Home } from "lucide-react";
 import { Logo } from "@/components/brand";
+import { SidebarNavItem } from "@/components/dashboard/sidebar-nav";
 import { createClient } from "@/lib/supabase/server";
 
 export default async function Layout({ children }: { children: React.ReactNode }) {
@@ -21,15 +22,15 @@ export default async function Layout({ children }: { children: React.ReactNode }
       <aside className="w-64 border-r border-border/40 bg-card/20 backdrop-blur-xl hidden md:flex flex-col">
         <div className="px-6 py-5">
           <Link href="/" className="flex items-center" aria-label="Codexa home">
-            <Logo width={120} priority />
+            <Logo width={150} priority />
           </Link>
         </div>
 
         <nav className="px-3 flex-1 space-y-1">
-          <NavItem href="/" icon={Home}>Home</NavItem>
-          <NavItem href="/dashboard" icon={LayoutDashboard}>Overview</NavItem>
-          <NavItem href="/dashboard/reviews" icon={GitPullRequest}>Reviews</NavItem>
-          <NavItem href="/dashboard/settings" icon={Settings}>Settings</NavItem>
+          <SidebarNavItem href="/" icon={Home} exact>Home</SidebarNavItem>
+          <SidebarNavItem href="/dashboard" icon={LayoutDashboard} exact>Overview</SidebarNavItem>
+          <SidebarNavItem href="/dashboard/reviews" icon={GitPullRequest}>Reviews</SidebarNavItem>
+          <SidebarNavItem href="/dashboard/settings" icon={Settings}>Settings</SidebarNavItem>
         </nav>
 
         <div className="p-3 border-t border-border/40">
@@ -60,13 +61,3 @@ export default async function Layout({ children }: { children: React.ReactNode }
   );
 }
 
-function NavItem({ href, icon: Icon, children }: { href: string; icon: typeof Home; children: React.ReactNode }) {
-  return (
-    <Link
-      href={href}
-      className="flex items-center gap-3 px-3 py-2 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 rounded-lg transition-colors"
-    >
-      <Icon className="h-4 w-4" /> {children}
-    </Link>
-  );
-}

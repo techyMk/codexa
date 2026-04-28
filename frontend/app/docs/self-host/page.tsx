@@ -164,6 +164,76 @@ cloudflared tunnel --url http://localhost:8000`}</Pre>
         after a sleep takes 30–60s to wake the container. GitHub auto-retries, so no reviews are
         lost — but expect occasional cold starts.
       </Callout>
+
+      <H2>Updating GitHub App permissions later</H2>
+      <P>
+        When you add features that need new GitHub permissions (e.g., switching from PR-comments-only
+        to also posting status checks), you have to update the App definition AND get existing
+        installations to accept the change. Two-step flow:
+      </P>
+
+      <H3>Step A — change the App permission</H3>
+      <ol className="list-decimal pl-6 space-y-1 text-muted-foreground mt-2">
+        <li>
+          Open <code className="font-mono">github.com/settings/apps/&lt;your-app&gt;/permissions</code>
+        </li>
+        <li>Adjust the permission you need (e.g., Checks → Read and write)</li>
+        <li>Click <strong className="text-foreground">Save changes</strong></li>
+        <li>
+          GitHub shows a yellow box: &quot;The following permissions have changed... These changes
+          require approval from each installation.&quot;
+        </li>
+      </ol>
+
+      <H3>Step B — accept on each installation</H3>
+      <P>
+        Existing installs keep using the OLD permissions until the install owner accepts the new
+        ones. To accept:
+      </P>
+      <ol className="list-decimal pl-6 space-y-1 text-muted-foreground mt-2">
+        <li>Click your avatar → <strong className="text-foreground">Settings</strong></li>
+        <li>
+          Left sidebar → <strong className="text-foreground">Applications</strong> →{" "}
+          <strong className="text-foreground">Installed GitHub Apps</strong>
+        </li>
+        <li>
+          Find your app → click <strong className="text-foreground">Configure</strong>
+        </li>
+        <li>
+          Yellow banner at top: <strong className="text-foreground">Review permissions</strong> →{" "}
+          <strong className="text-foreground">Accept new permissions</strong>
+        </li>
+      </ol>
+
+      <Callout variant="warn" title="If you skip this step">
+        The bot won&apos;t crash — it&apos;ll just silently fail to use the new permission. You&apos;ll see
+        errors like <code className="font-mono">403 Resource not accessible by integration</code>{" "}
+        in your backend logs. Always re-accept after permission changes.
+      </Callout>
+
+      <H2>Common deployment errors</H2>
+      <ul className="list-disc pl-6 space-y-2 text-muted-foreground">
+        <li>
+          <strong className="text-foreground">Render returns 502 / takes 60s on first hit</strong> — free tier cold start. Normal. Upgrade to Starter ($7/mo) for always-on.
+        </li>
+        <li>
+          <strong className="text-foreground">Backend returns 401 on webhooks</strong> — webhook secret in GitHub doesn&apos;t match{" "}
+          <code className="font-mono">GITHUB_WEBHOOK_SECRET</code> in Render env.
+        </li>
+        <li>
+          <strong className="text-foreground">JWT signing fails with &quot;invalid key&quot;</strong> — multi-line PEM
+          got mangled. Re-paste the entire .pem content (including BEGIN/END lines) into Render&apos;s
+          env editor.
+        </li>
+        <li>
+          <strong className="text-foreground">Dashboard shows 0 reviews but PR was reviewed</strong> —{" "}
+          <code className="font-mono">NEXT_PUBLIC_BACKEND_URL</code> wrong in Vercel env. Update + redeploy.
+        </li>
+        <li>
+          <strong className="text-foreground">Status check never appears on PR</strong> — App
+          permission update wasn&apos;t accepted on the install (see above).
+        </li>
+      </ul>
     </>
   );
 }

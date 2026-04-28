@@ -33,7 +33,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
     <main className="relative min-h-screen overflow-x-hidden">
       <Navbar />
 
-      <div className="container max-w-7xl pt-28 pb-12">
+      <div className="container max-w-7xl pt-32 pb-12">
         <div className="grid grid-cols-1 lg:grid-cols-[220px_1fr] gap-10">
           {/* Sidebar */}
           <aside className="lg:sticky lg:top-24 lg:self-start">

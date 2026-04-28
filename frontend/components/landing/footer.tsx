@@ -9,7 +9,7 @@ export function Footer() {
       <div className="container flex flex-col md:flex-row items-center justify-between gap-6">
         <div className="flex flex-col sm:flex-row items-center gap-x-6 gap-y-2 text-sm text-muted-foreground">
           <Link href="/" aria-label="Codexa home">
-            <Logo width={120} />
+            <Logo width={150} />
           </Link>
           <span className="hidden sm:inline-block h-4 w-px bg-border/60" />
           <span>
