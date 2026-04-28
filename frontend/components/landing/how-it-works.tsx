@@ -16,8 +16,8 @@ const steps = [
   },
   {
     icon: Brain,
-    title: "AI reviews the diff",
-    desc: "Gemini 2.0 Flash runs first; Groq Llama 3.3 catches the call if Gemini is rate-limited.",
+    title: "Codexa reviews the diff",
+    desc: "Smart AI routing picks the fastest available model for your review — with automatic failover so you never wait on rate limits.",
   },
   {
     icon: MessageSquare,

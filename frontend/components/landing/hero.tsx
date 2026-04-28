@@ -79,8 +79,8 @@ export function Hero() {
           transition={{ duration: 0.6, delay: 0.2 }}
           className="mt-6 max-w-2xl mx-auto text-lg md:text-xl text-muted-foreground text-balance"
         >
-          Catch bugs, security issues, and bad patterns before merge. Powered by Gemini and
-          Llama 3.3 — completely free, completely yours.
+          Codexa catches bugs, security issues, and bad patterns before merge — without
+          slowing your CI. Free, open-source, and yours to keep.
         </motion.p>
 
         <motion.div
@@ -168,16 +168,16 @@ function PRPreview() {
               <div className="flex-1">
                 <div className="text-foreground font-semibold mb-2">🤖 Codexa AI Review</div>
                 <p className="text-muted-foreground text-sm leading-relaxed">
-                  This PR adds JWT auth, but the secret is read from env without a fallback check
-                  and the token expiry is set to 30 days — both worth tightening before merge.
+                  Solid JWT setup overall. Two things worth fixing before merge — a missing
+                  env-var guard and an overly long token expiry.
                 </p>
                 <div className="mt-4 space-y-2.5">
                   <Finding sev="error" file="auth/jwt.py" line={24}
-                    msg="Crash if SECRET_KEY is unset — add an explicit guard at startup." />
+                    msg="App crashes silently if SECRET_KEY isn't set. Fail fast at startup instead." />
                   <Finding sev="warn" file="auth/jwt.py" line={31}
-                    msg="30-day expiry is long for access tokens; consider rotating refresh tokens instead." />
+                    msg="30-day access tokens are risky. Use short-lived access + refresh tokens." />
                   <Finding sev="info" file="api/login.py" line={12}
-                    msg="Email comparison is case-sensitive — normalize before lookup." />
+                    msg="Email lookup is case-sensitive — normalize on insert and on lookup." />
                 </div>
               </div>
             </div>

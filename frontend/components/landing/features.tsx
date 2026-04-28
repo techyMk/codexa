@@ -30,7 +30,7 @@ const features = [
   {
     icon: Zap,
     title: "Sub-30s reviews",
-    desc: "Llama 3.3 on Groq runs at ~500 t/s. Your CI doesn't wait, and neither do you.",
+    desc: "Codexa lands findings in seconds, not minutes. Your CI doesn't wait, and neither do you.",
   },
   {
     icon: GitPullRequest,
@@ -39,13 +39,13 @@ const features = [
   },
   {
     icon: Brain,
-    title: "Dual model fallback",
-    desc: "Gemini 2.0 Flash is primary; Groq Llama 3.3 takes over on rate-limit or timeout.",
+    title: "Always-on reliability",
+    desc: "Codexa runs on multiple AI providers with automatic failover. If one is throttled, the next steps in seamlessly.",
   },
   {
     icon: Lock,
     title: "Bring your own key",
-    desc: "Plug in your own Gemini or Groq key — your code never touches our servers.",
+    desc: "Plug in your own AI provider key — your code never touches our servers.",
   },
   {
     icon: Cpu,

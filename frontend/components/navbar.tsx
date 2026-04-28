@@ -7,6 +7,7 @@ import {
   LayoutDashboard,
   Settings,
   LogOut,
+  ChevronDown,
 } from "lucide-react";
 import { Logo } from "@/components/brand";
 import type { User } from "@supabase/supabase-js";
@@ -112,17 +113,26 @@ function UserMenu({ user }: { user: User }) {
     <div ref={ref} className="relative">
       <button
         onClick={() => setOpen((o) => !o)}
-        className="flex items-center gap-2 rounded-full p-0.5 hover:ring-2 hover:ring-primary/40 transition"
+        className="flex items-center gap-2 rounded-full pl-1 pr-2.5 py-1 border border-border/60 bg-card/40 backdrop-blur hover:bg-card/70 hover:border-border transition"
         aria-label="Account menu"
       >
         {avatar ? (
           // eslint-disable-next-line @next/next/no-img-element
-          <img src={avatar} alt="" className="h-8 w-8 rounded-full" />
+          <img src={avatar} alt="" className="h-7 w-7 rounded-full" />
         ) : (
-          <div className="h-8 w-8 rounded-full bg-gradient-to-br from-violet-500 to-blue-500 flex items-center justify-center text-white text-sm font-semibold">
+          <div className="h-7 w-7 rounded-full bg-gradient-to-br from-violet-500 to-blue-500 flex items-center justify-center text-white text-xs font-semibold">
             {initial}
           </div>
         )}
+        <span className="hidden sm:inline text-sm font-medium text-foreground max-w-[140px] truncate">
+          {name}
+        </span>
+        <ChevronDown
+          className={cn(
+            "h-3.5 w-3.5 text-muted-foreground transition-transform",
+            open && "rotate-180",
+          )}
+        />
       </button>
 
       {open && (
