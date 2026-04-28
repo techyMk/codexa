@@ -39,14 +39,14 @@ export function Navbar() {
       const scrollY = window.scrollY + offset;
       let current: string | null = null;
 
+      // Walk sections in document order; the last one whose top is above the
+      // scroll line wins. This naturally keeps "how-it-works" active when the
+      // user scrolls into the CTA / footer below it.
       for (const id of sectionIds) {
         const el = document.getElementById(id);
         if (!el) continue;
-        const top = el.offsetTop;
-        const bottom = top + el.offsetHeight;
-        if (scrollY >= top && scrollY < bottom) {
+        if (el.offsetTop <= scrollY) {
           current = id;
-          break;
         }
       }
       setActiveAnchor(current);

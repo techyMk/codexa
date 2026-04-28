@@ -61,6 +61,48 @@
   ::selection {
     background: hsl(var(--primary) / 0.3);
   }
+
+  /* ── Modern scrollbar ─────────────────────────────────────────── */
+  /* Firefox */
+  html {
+    scrollbar-width: thin;
+    scrollbar-color: hsl(var(--primary) / 0.45) transparent;
+  }
+
+  /* WebKit / Chromium */
+  ::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: linear-gradient(
+      180deg,
+      hsl(250 95% 70% / 0.5),
+      hsl(220 95% 65% / 0.5)
+    );
+    border-radius: 999px;
+    border: 2px solid transparent;
+    background-clip: padding-box;
+    transition: background 200ms ease;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(
+      180deg,
+      hsl(250 95% 70% / 0.85),
+      hsl(220 95% 65% / 0.85)
+    );
+    background-clip: padding-box;
+  }
+  ::-webkit-scrollbar-corner {
+    background: transparent;
+  }
+  /* Hide scrollbar arrows (Edge) */
+  ::-webkit-scrollbar-button {
+    display: none;
+  }
   button:not(:disabled),
   [role="button"]:not([aria-disabled="true"]),
   a[href] {
