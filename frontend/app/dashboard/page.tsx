@@ -2,10 +2,11 @@ import Link from "next/link";
 import { GitPullRequest, AlertTriangle, Clock, CheckCircle2, ExternalLink } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { INSTALL_URL } from "@/lib/constants";
-import { fetchStats, fetchReviews } from "./data";
+import { fetchStats, fetchReviews, getCurrentGithubLogin } from "./data";
 
 export default async function Page() {
-  const [stats, reviews] = await Promise.all([fetchStats(), fetchReviews(10)]);
+  const owner = await getCurrentGithubLogin();
+  const [stats, reviews] = await Promise.all([fetchStats(owner), fetchReviews(10, owner)]);
 
   return (
     <div className="p-8 max-w-7xl mx-auto">

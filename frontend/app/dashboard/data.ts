@@ -1,4 +1,19 @@
 import "server-only";
+import { createClient } from "@/lib/supabase/server";
+
+/**
+ * GitHub username (login) of the currently signed-in user, or undefined if not logged in.
+ * Read from Supabase OAuth metadata — populated automatically by GitHub provider.
+ */
+export async function getCurrentGithubLogin(): Promise<string | undefined> {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) return undefined;
+  const meta = user.user_metadata as Record<string, unknown> | null;
+  return (meta?.user_name as string | undefined) ?? (meta?.preferred_username as string | undefined);
+}
 
 export type Review = {
   id: string;
@@ -30,9 +45,19 @@ const EMPTY_STATS: Stats = {
   avg_duration_ms: 0,
 };
 
-export async function fetchStats(): Promise<Stats> {
+function buildUrl(path: string, params: Record<string, string | number | undefined>) {
+  const url = new URL(path, BACKEND);
+  for (const [k, v] of Object.entries(params)) {
+    if (v !== undefined && v !== "") url.searchParams.set(k, String(v));
+  }
+  return url.toString();
+}
+
+export async function fetchStats(owner?: string): Promise<Stats> {
   try {
-    const r = await fetch(`${BACKEND}/reviews/stats`, { next: { revalidate: 30 } });
+    const r = await fetch(buildUrl("/reviews/stats", { owner }), {
+      next: { revalidate: 30 },
+    });
     if (!r.ok) return EMPTY_STATS;
     return await r.json();
   } catch {
@@ -40,9 +65,11 @@ export async function fetchStats(): Promise<Stats> {
   }
 }
 
-export async function fetchReviews(limit = 50): Promise<Review[]> {
+export async function fetchReviews(limit = 50, owner?: string): Promise<Review[]> {
   try {
-    const r = await fetch(`${BACKEND}/reviews?limit=${limit}`, { next: { revalidate: 15 } });
+    const r = await fetch(buildUrl("/reviews", { limit, owner }), {
+      next: { revalidate: 15 },
+    });
     if (!r.ok) return [];
     const data = await r.json();
     return data.reviews ?? [];

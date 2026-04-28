@@ -9,12 +9,19 @@ router = APIRouter(prefix="/reviews", tags=["reviews"])
 async def list_reviews(
     limit: int = Query(default=50, ge=1, le=200),
     repo: str | None = None,
+    owner: str | None = None,
 ):
-    """Recent review records — used by the dashboard."""
+    """Recent review records — used by the dashboard.
+
+    `owner` filters to repos prefixed `<owner>/` so users only see reviews
+    from their own GitHub account/orgs on the dashboard.
+    """
     try:
         q = supabase().table("reviews").select("*").order("created_at", desc=True).limit(limit)
         if repo:
             q = q.eq("repo", repo)
+        if owner:
+            q = q.like("repo", f"{owner}/%")
         result = q.execute()
         return {"reviews": result.data}
     except Exception as e:
@@ -22,10 +29,13 @@ async def list_reviews(
 
 
 @router.get("/stats")
-async def stats():
-    """Aggregate counters for the dashboard hero cards."""
+async def stats(owner: str | None = None):
+    """Aggregate counters for the dashboard hero cards, optionally per-owner."""
     try:
-        rows = supabase().table("reviews").select("status,findings_count,duration_ms").execute().data
+        q = supabase().table("reviews").select("repo,status,findings_count,duration_ms")
+        if owner:
+            q = q.like("repo", f"{owner}/%")
+        rows = q.execute().data
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
