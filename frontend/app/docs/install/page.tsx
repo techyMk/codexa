@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Image from "next/image";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { DocHeader, H2, P, Pre, Callout } from "@/components/docs/docs-content";
@@ -29,6 +30,20 @@ export default function Page() {
       >
         Install on GitHub <ArrowRight className="h-4 w-4" />
       </Link>
+
+      <figure className="mt-6 rounded-xl border border-border/60 overflow-hidden bg-card/40 backdrop-blur shadow-2xl">
+        <Image
+          src="/screenshots/install-screen.png"
+          alt="GitHub install screen for Codexa"
+          width={1920}
+          height={900}
+          sizes="(min-width: 1024px) 768px, 100vw"
+          className="w-full h-auto"
+        />
+        <figcaption className="px-4 py-2 text-xs text-muted-foreground text-center border-t border-border/40">
+          GitHub&apos;s install confirmation screen — pick which repos to grant access to.
+        </figcaption>
+      </figure>
 
       <H2>2. Open a pull request</H2>
       <P>

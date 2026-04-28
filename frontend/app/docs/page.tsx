@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Image from "next/image";
 import Link from "next/link";
 import { ArrowRight, Sparkles, Server, Settings, Code2, Zap, Shield } from "lucide-react";
 import { DocHeader, P } from "@/components/docs/docs-content";
@@ -62,6 +63,21 @@ export default function Page() {
         and bad patterns before merge — and posts findings as a single review comment with file,
         line, severity, and concrete fix suggestions.
       </P>
+
+      <figure className="mt-8 rounded-xl border border-border/60 overflow-hidden bg-card/40 backdrop-blur shadow-2xl">
+        <Image
+          src="/screenshots/pr-comment.png"
+          alt="A real Codexa review comment on a GitHub pull request"
+          width={1920}
+          height={900}
+          sizes="(min-width: 1024px) 768px, 100vw"
+          className="w-full h-auto"
+          priority
+        />
+        <figcaption className="px-4 py-2 text-xs text-muted-foreground text-center border-t border-border/40">
+          A real review comment posted by Codexa on a pull request.
+        </figcaption>
+      </figure>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-8">
         {CARDS.map((c) => (
