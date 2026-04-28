@@ -1,8 +1,7 @@
-import { fetchReviews, getCurrentGithubLogin } from "../data";
+import { fetchReviews } from "../data";
 
 export default async function Page() {
-  const owner = await getCurrentGithubLogin();
-  const reviews = await fetchReviews(100, owner);
+  const reviews = await fetchReviews(100);
 
   return (
     <div className="p-8 max-w-7xl mx-auto">

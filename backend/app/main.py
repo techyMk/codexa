@@ -39,7 +39,8 @@ def create_app() -> FastAPI:
         allow_origins=[settings.frontend_url, "http://localhost:3000"],
         allow_credentials=True,
         allow_methods=["GET", "POST", "OPTIONS"],
-        allow_headers=["*"],
+        allow_headers=["Authorization", "Content-Type", "X-GitHub-Event", "X-Hub-Signature-256"],
+        expose_headers=["WWW-Authenticate"],
     )
 
     app.include_router(health.router)

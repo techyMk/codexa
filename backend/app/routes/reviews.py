@@ -1,27 +1,40 @@
-from fastapi import APIRouter, HTTPException, Query
+from fastapi import APIRouter, Depends, HTTPException, Query
 
+from app.core.auth import CurrentUser, get_current_user
 from app.db.supabase import supabase
 
 router = APIRouter(prefix="/reviews", tags=["reviews"])
 
 
+_EMPTY_STATS = {
+    "total_reviews": 0,
+    "completed_reviews": 0,
+    "findings": 0,
+    "avg_duration_ms": 0,
+}
+
+
 @router.get("")
 async def list_reviews(
+    current_user: CurrentUser = Depends(get_current_user),
     limit: int = Query(default=50, ge=1, le=200),
     repo: str | None = None,
-    owner: str | None = None,
 ):
-    """Recent review records — used by the dashboard.
+    """Recent review records — scoped to the signed-in user's GitHub login."""
+    if not current_user.github_login:
+        return {"reviews": []}
 
-    `owner` filters to repos prefixed `<owner>/` so users only see reviews
-    from their own GitHub account/orgs on the dashboard.
-    """
     try:
-        q = supabase().table("reviews").select("*").order("created_at", desc=True).limit(limit)
+        q = (
+            supabase()
+            .table("reviews")
+            .select("*")
+            .like("repo", f"{current_user.github_login}/%")
+            .order("created_at", desc=True)
+            .limit(limit)
+        )
         if repo:
             q = q.eq("repo", repo)
-        if owner:
-            q = q.like("repo", f"{owner}/%")
         result = q.execute()
         return {"reviews": result.data}
     except Exception as e:
@@ -29,13 +42,20 @@ async def list_reviews(
 
 
 @router.get("/stats")
-async def stats(owner: str | None = None):
-    """Aggregate counters for the dashboard hero cards, optionally per-owner."""
+async def stats(current_user: CurrentUser = Depends(get_current_user)):
+    """Aggregate counters scoped to the signed-in user."""
+    if not current_user.github_login:
+        return _EMPTY_STATS
+
     try:
-        q = supabase().table("reviews").select("repo,status,findings_count,duration_ms")
-        if owner:
-            q = q.like("repo", f"{owner}/%")
-        rows = q.execute().data
+        rows = (
+            supabase()
+            .table("reviews")
+            .select("status,findings_count,duration_ms")
+            .like("repo", f"{current_user.github_login}/%")
+            .execute()
+            .data
+        )
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 

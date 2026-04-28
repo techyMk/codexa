@@ -19,6 +19,7 @@ class Settings(BaseSettings):
 
     supabase_url: str = Field(default="")
     supabase_service_role_key: str = Field(default="")
+    supabase_jwt_secret: str = Field(default="")  # HS256 fallback for older Supabase projects
 
     frontend_url: str = Field(default="http://localhost:3000")
     environment: str = Field(default="development")

@@ -1,20 +1,6 @@
 import "server-only";
 import { createClient } from "@/lib/supabase/server";
 
-/**
- * GitHub username (login) of the currently signed-in user, or undefined if not logged in.
- * Read from Supabase OAuth metadata — populated automatically by GitHub provider.
- */
-export async function getCurrentGithubLogin(): Promise<string | undefined> {
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-  if (!user) return undefined;
-  const meta = user.user_metadata as Record<string, unknown> | null;
-  return (meta?.user_name as string | undefined) ?? (meta?.preferred_username as string | undefined);
-}
-
 export type Review = {
   id: string;
   repo: string;
@@ -45,7 +31,7 @@ const EMPTY_STATS: Stats = {
   avg_duration_ms: 0,
 };
 
-function buildUrl(path: string, params: Record<string, string | number | undefined>) {
+function buildUrl(path: string, params: Record<string, string | number | undefined> = {}) {
   const url = new URL(path, BACKEND);
   for (const [k, v] of Object.entries(params)) {
     if (v !== undefined && v !== "") url.searchParams.set(k, String(v));
@@ -53,10 +39,30 @@ function buildUrl(path: string, params: Record<string, string | number | undefin
   return url.toString();
 }
 
-export async function fetchStats(owner?: string): Promise<Stats> {
+/**
+ * Fetch backend with the user's Supabase access_token in the Authorization header.
+ * The backend verifies the JWT against Supabase's JWKS and scopes results to the user.
+ */
+async function authedFetch(url: string, init?: RequestInit): Promise<Response> {
+  const supabase = await createClient();
+  const {
+    data: { session },
+  } = await supabase.auth.getSession();
+  const token = session?.access_token;
+
+  return fetch(url, {
+    ...init,
+    headers: {
+      ...(init?.headers as Record<string, string> | undefined),
+      ...(token ? { Authorization: `Bearer ${token}` } : {}),
+    },
+  });
+}
+
+export async function fetchStats(): Promise<Stats> {
   try {
-    const r = await fetch(buildUrl("/reviews/stats", { owner }), {
-      next: { revalidate: 30 },
+    const r = await authedFetch(buildUrl("/reviews/stats"), {
+      cache: "no-store",
     });
     if (!r.ok) return EMPTY_STATS;
     return await r.json();
@@ -65,10 +71,10 @@ export async function fetchStats(owner?: string): Promise<Stats> {
   }
 }
 
-export async function fetchReviews(limit = 50, owner?: string): Promise<Review[]> {
+export async function fetchReviews(limit = 50): Promise<Review[]> {
   try {
-    const r = await fetch(buildUrl("/reviews", { limit, owner }), {
-      next: { revalidate: 15 },
+    const r = await authedFetch(buildUrl("/reviews", { limit }), {
+      cache: "no-store",
     });
     if (!r.ok) return [];
     const data = await r.json();
