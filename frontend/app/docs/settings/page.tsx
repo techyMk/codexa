@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Image from "next/image";
 import Link from "next/link";
 import { DocHeader, H2, P, Pre, Callout } from "@/components/docs/docs-content";
 
@@ -12,6 +13,20 @@ export default function Page() {
         title="Per-repository settings"
         summary="Customize how Codexa reviews each repo. Available at /dashboard/settings/repos after sign-in."
       />
+
+      <figure className="mt-2 rounded-xl border border-border/60 overflow-hidden bg-card/40 backdrop-blur shadow-2xl">
+        <Image
+          src="/screenshots/repo-settings.png"
+          alt="Per-repo settings form with skip paths, severity threshold, and custom guidance"
+          width={1920}
+          height={900}
+          sizes="(min-width: 1024px) 768px, 100vw"
+          className="w-full h-auto"
+        />
+        <figcaption className="px-4 py-2 text-xs text-muted-foreground text-center border-t border-border/40">
+          Per-repo settings — fine-tune what Codexa flags and how it speaks.
+        </figcaption>
+      </figure>
 
       <H2>Skip paths</H2>
       <P>

@@ -6,7 +6,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import {
   GitPullRequest,
   CheckCircle2,
-  LayoutDashboard,
+  Sliders,
   Search,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -29,12 +29,12 @@ const TABS = [
     url: "github.com/your-org/repo/pull/12/checks",
   },
   {
-    id: "dashboard",
-    label: "Dashboard",
-    icon: LayoutDashboard,
-    desc: "Every review tracked. Filter by repo and status. See findings count, duration, and provider at a glance.",
-    image: "/screenshots/dashboard-overview.png",
-    url: "codexa.dev/dashboard",
+    id: "settings",
+    label: "Per-repo Settings",
+    icon: Sliders,
+    desc: "Tune Codexa for each repo — skip lockfiles, set a severity threshold, and add custom guidance the AI must follow.",
+    image: "/screenshots/repo-settings.png",
+    url: "codexa.dev/dashboard/settings/repos/...",
   },
   {
     id: "detail",
