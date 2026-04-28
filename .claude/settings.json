@@ -5,7 +5,8 @@
       "Bash(pip install *)",
       "Bash(python -c ' *)",
       "Bash(git init *)",
-      "Bash(git check-ignore *)"
+      "Bash(git check-ignore *)",
+      "Bash(npm run *)"
     ]
   }
 }
