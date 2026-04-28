@@ -3,8 +3,9 @@
 import { motion } from "framer-motion";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
+import { Star } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { INSTALL_URL } from "@/lib/constants";
+import { INSTALL_URL, GITHUB_REPO_URL } from "@/lib/constants";
 
 export function CTA() {
   return (
@@ -32,8 +33,10 @@ export function CTA() {
                 Install on GitHub <ArrowRight className="h-4 w-4" />
               </Button>
             </Link>
-            <Link href="https://github.com/" target="_blank">
-              <Button variant="outline" size="lg">Star on GitHub</Button>
+            <Link href={GITHUB_REPO_URL} target="_blank" rel="noopener">
+              <Button variant="outline" size="lg">
+                <Star className="h-4 w-4" /> Star on GitHub
+              </Button>
             </Link>
           </div>
         </motion.div>

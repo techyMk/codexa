@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Github, Twitter } from "lucide-react";
+import { Github } from "lucide-react";
 import { Logo } from "@/components/brand";
 import { GITHUB_REPO_URL } from "@/lib/constants";
 
@@ -25,24 +25,21 @@ export function Footer() {
           </span>
         </div>
 
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-5 text-sm text-muted-foreground">
+          <Link href="/terms" className="hover:text-foreground transition-colors">
+            Terms
+          </Link>
+          <Link href="/privacy" className="hover:text-foreground transition-colors">
+            Privacy
+          </Link>
           <Link
             href={GITHUB_REPO_URL}
             target="_blank"
             rel="noopener"
             aria-label="GitHub"
-            className="text-muted-foreground hover:text-foreground transition-colors"
+            className="hover:text-foreground transition-colors"
           >
             <Github className="h-4 w-4" />
-          </Link>
-          <Link
-            href="https://twitter.com/"
-            target="_blank"
-            rel="noopener"
-            aria-label="Twitter"
-            className="text-muted-foreground hover:text-foreground transition-colors"
-          >
-            <Twitter className="h-4 w-4" />
           </Link>
         </div>
       </div>

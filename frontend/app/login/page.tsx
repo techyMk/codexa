@@ -61,8 +61,8 @@ function LoginInner() {
 
           <p className="text-xs text-muted-foreground text-center mt-6">
             By continuing, you agree to our{" "}
-            <Link href="#" className="underline hover:text-foreground">Terms</Link> and{" "}
-            <Link href="#" className="underline hover:text-foreground">Privacy Policy</Link>.
+            <Link href="/terms" className="underline hover:text-foreground">Terms</Link> and{" "}
+            <Link href="/privacy" className="underline hover:text-foreground">Privacy Policy</Link>.
           </p>
         </div>
       </div>
