@@ -33,28 +33,42 @@ export function Navbar() {
     }
 
     const sectionIds = ["features", "how-it-works"];
-    const elements = sectionIds
-      .map((id) => document.getElementById(id))
-      .filter((el): el is HTMLElement => el !== null);
 
-    if (elements.length === 0) return;
+    const updateActive = () => {
+      const offset = 120; // navbar height + comfort margin
+      const scrollY = window.scrollY + offset;
+      let current: string | null = null;
 
-    const observer = new IntersectionObserver(
-      (entries) => {
-        const visible = entries
-          .filter((e) => e.isIntersecting)
-          .sort(
-            (a, b) =>
-              (a.target as HTMLElement).offsetTop -
-              (b.target as HTMLElement).offsetTop,
-          );
-        setActiveAnchor(visible.length > 0 ? visible[0].target.id : null);
-      },
-      { rootMargin: "-35% 0px -55% 0px", threshold: 0 },
-    );
+      for (const id of sectionIds) {
+        const el = document.getElementById(id);
+        if (!el) continue;
+        const top = el.offsetTop;
+        const bottom = top + el.offsetHeight;
+        if (scrollY >= top && scrollY < bottom) {
+          current = id;
+          break;
+        }
+      }
+      setActiveAnchor(current);
+    };
 
-    elements.forEach((el) => observer.observe(el));
-    return () => observer.disconnect();
+    let ticking = false;
+    const onScroll = () => {
+      if (ticking) return;
+      ticking = true;
+      requestAnimationFrame(() => {
+        updateActive();
+        ticking = false;
+      });
+    };
+
+    updateActive(); // initial run
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", onScroll, { passive: true });
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("resize", onScroll);
+    };
   }, [pathname]);
 
   function isActive(href: string): boolean {
@@ -71,13 +85,14 @@ export function Navbar() {
   function navLinkCls(href: string, extra = ""): string {
     const active = isActive(href);
     return cn(
-      "relative py-1.5 transition-colors duration-200",
-      "after:pointer-events-none after:absolute after:left-0 after:right-0 after:-bottom-0.5 after:h-0.5",
+      "relative py-1.5 transition-colors duration-300 ease-out",
+      // persistent underline that fades in/out — identical for every link length
+      "after:pointer-events-none after:absolute after:left-0 after:right-0 after:-bottom-1 after:h-[2px]",
       "after:rounded-full after:bg-gradient-to-r after:from-violet-500 after:to-blue-500",
-      "after:transition-all after:duration-300 after:ease-out after:origin-center",
+      "after:transition-opacity after:duration-300 after:ease-out",
       active
-        ? "text-foreground font-medium after:opacity-100 after:scale-x-100"
-        : "hover:text-foreground after:opacity-0 after:scale-x-50",
+        ? "text-foreground font-medium after:opacity-100"
+        : "hover:text-foreground after:opacity-0",
       extra,
     );
   }
