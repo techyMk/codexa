@@ -6,14 +6,14 @@ import { Toaster } from "sonner";
 export const metadata: Metadata = {
   metadataBase: new URL("https://codexa.dev"),
   title: {
-    default: "Codexa — AI Code Review for Pull Requests",
+    default: "Codexa AI — Code Review Bot for Pull Requests",
     template: "%s · Codexa",
   },
   description:
     "Free, fast, open-source GitHub bot that reviews every PR with AI. Catches bugs, security issues, and bad patterns before merge.",
   keywords: ["AI code review", "GitHub bot", "pull request", "code quality", "security review"],
   openGraph: {
-    title: "Codexa — AI Code Review for Pull Requests",
+    title: "Codexa AI — Code Review Bot for Pull Requests",
     description: "AI-powered, free, open-source PR reviewer for GitHub.",
     url: "https://codexa.dev",
     siteName: "Codexa",

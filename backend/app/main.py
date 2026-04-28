@@ -14,19 +14,19 @@ async def lifespan(_: FastAPI):
     log = get_logger(__name__)
     s = get_settings()
     log.info(
-        "codexa_startup",
+        "codexa-ai_startup",
         env=s.environment,
         gemini=bool(s.gemini_api_key),
         groq=bool(s.groq_api_key),
     )
     yield
-    log.info("codexa_shutdown")
+    log.info("codexa-ai_shutdown")
 
 
 def create_app() -> FastAPI:
     settings = get_settings()
     app = FastAPI(
-        title="Codexa",
+        title="Codexa AI",
         description="AI Code Review Bot — backend",
         version="0.1.0",
         lifespan=lifespan,
