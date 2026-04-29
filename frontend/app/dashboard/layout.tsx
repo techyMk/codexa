@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 import { LogOut } from "lucide-react";
 import { Logo } from "@/components/brand";
 import { SidebarNav } from "@/components/dashboard/sidebar-nav";
+import { MobileDashboardNav } from "@/components/dashboard/mobile-nav";
 import { createClient } from "@/lib/supabase/server";
 
 export default async function Layout({ children }: { children: React.ReactNode }) {
@@ -52,8 +53,15 @@ export default async function Layout({ children }: { children: React.ReactNode }
         </div>
       </aside>
 
-      {/* Main */}
-      <main className="flex-1 min-w-0">{children}</main>
+      {/* Main — mobile gets the top bar + slide-out drawer */}
+      <main className="flex-1 min-w-0">
+        <MobileDashboardNav
+          avatarUrl={avatar || undefined}
+          name={name}
+          email={user.email ?? null}
+        />
+        {children}
+      </main>
     </div>
   );
 }

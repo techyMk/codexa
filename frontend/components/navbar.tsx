@@ -3,13 +3,16 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import {
-  Github,
   LayoutDashboard,
   Settings,
   LogOut,
   ChevronDown,
+  Menu,
+  X,
 } from "lucide-react";
+import { GitHubIcon } from "@/components/icons/github";
 import { Logo } from "@/components/brand";
 import type { User } from "@supabase/supabase-js";
 
@@ -22,8 +25,22 @@ import { createClient } from "@/lib/supabase/client";
 export function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [activeAnchor, setActiveAnchor] = useState<string | null>(null);
+  const [mobileOpen, setMobileOpen] = useState(false);
   const { user, loading } = useUser();
   const pathname = usePathname();
+
+  // Close mobile menu on route change
+  useEffect(() => {
+    setMobileOpen(false);
+  }, [pathname]);
+
+  // Lock body scroll when mobile menu is open
+  useEffect(() => {
+    document.body.style.overflow = mobileOpen ? "hidden" : "";
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [mobileOpen]);
 
   // Scroll-spy for the landing-page section anchors (Features, How it works)
   useEffect(() => {
@@ -134,28 +151,145 @@ export function Navbar() {
             rel="noopener"
             className={navLinkCls(GITHUB_REPO_URL, "flex items-center gap-1.5")}
           >
-            <Github className="h-4 w-4" /> GitHub
+            <GitHubIcon className="h-4 w-4" /> GitHub
           </Link>
         </nav>
 
         <div className="flex items-center gap-2">
-          {loading ? (
-            <div className="h-8 w-20 rounded-md bg-muted/40 animate-pulse" />
-          ) : user ? (
-            <UserMenu user={user} />
-          ) : (
-            <>
-              <Link href="/login">
-                <Button variant="ghost" size="sm">Sign in</Button>
-              </Link>
-              <Link href={INSTALL_URL} target="_blank" rel="noopener">
-                <Button variant="glow" size="sm">Install free</Button>
-              </Link>
-            </>
-          )}
+          <div className="hidden md:flex items-center gap-2">
+            {loading ? (
+              <div className="h-8 w-20 rounded-md bg-muted/40 animate-pulse" />
+            ) : user ? (
+              <UserMenu user={user} />
+            ) : (
+              <>
+                <Link href="/login">
+                  <Button variant="ghost" size="sm">Sign in</Button>
+                </Link>
+                <Link href={INSTALL_URL} target="_blank" rel="noopener">
+                  <Button variant="glow" size="sm">Install free</Button>
+                </Link>
+              </>
+            )}
+          </div>
+
+          {/* Mobile hamburger */}
+          <button
+            onClick={() => setMobileOpen((o) => !o)}
+            aria-label={mobileOpen ? "Close menu" : "Open menu"}
+            className="md:hidden p-2 rounded-lg hover:bg-accent/40 transition-colors"
+          >
+            <AnimatePresence mode="wait" initial={false}>
+              {mobileOpen ? (
+                <motion.div key="x" initial={{ rotate: -90, opacity: 0 }} animate={{ rotate: 0, opacity: 1 }} exit={{ rotate: 90, opacity: 0 }} transition={{ duration: 0.18 }}>
+                  <X className="h-5 w-5" />
+                </motion.div>
+              ) : (
+                <motion.div key="menu" initial={{ rotate: 90, opacity: 0 }} animate={{ rotate: 0, opacity: 1 }} exit={{ rotate: -90, opacity: 0 }} transition={{ duration: 0.18 }}>
+                  <Menu className="h-5 w-5" />
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </button>
         </div>
       </div>
+
+      {/* Mobile menu panel */}
+      <AnimatePresence>
+        {mobileOpen && (
+          <motion.div
+            initial={{ opacity: 0, y: -8 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -8 }}
+            transition={{ duration: 0.2, ease: "easeOut" }}
+            className="md:hidden absolute top-full inset-x-0 border-b border-border/40 bg-background/95 backdrop-blur-xl shadow-xl"
+          >
+            <div className="container py-4 flex flex-col">
+              <MobileLink href="/" onSelect={() => setMobileOpen(false)}>Home</MobileLink>
+              <MobileLink href="/#features" onSelect={() => setMobileOpen(false)}>Features</MobileLink>
+              <MobileLink href="/#how-it-works" onSelect={() => setMobileOpen(false)}>How it works</MobileLink>
+              <MobileLink href="/docs" onSelect={() => setMobileOpen(false)}>Docs</MobileLink>
+              {user && (
+                <MobileLink href="/dashboard" onSelect={() => setMobileOpen(false)}>Dashboard</MobileLink>
+              )}
+              <MobileLink
+                href={GITHUB_REPO_URL}
+                onSelect={() => setMobileOpen(false)}
+                external
+              >
+                <GitHubIcon className="h-4 w-4" /> GitHub
+              </MobileLink>
+
+              <div className="h-px bg-border/40 my-3" />
+
+              {!loading && (user ? (
+                <div className="space-y-2">
+                  <div className="flex items-center gap-3 px-3 py-2">
+                    {(user.user_metadata?.avatar_url as string | undefined) && (
+                      // eslint-disable-next-line @next/next/no-img-element
+                      <img
+                        src={user.user_metadata?.avatar_url as string}
+                        alt=""
+                        className="h-8 w-8 rounded-full"
+                      />
+                    )}
+                    <div className="flex-1 min-w-0">
+                      <div className="text-sm font-medium truncate">
+                        {(user.user_metadata?.user_name as string | undefined) ?? user.email}
+                      </div>
+                      {user.email && (
+                        <div className="text-xs text-muted-foreground truncate">{user.email}</div>
+                      )}
+                    </div>
+                  </div>
+                  <form action="/auth/signout" method="post">
+                    <button
+                      type="submit"
+                      className="w-full flex items-center gap-2 px-3 py-2 text-sm rounded-lg hover:bg-accent/40 transition-colors text-red-400"
+                    >
+                      <LogOut className="h-4 w-4" /> Sign out
+                    </button>
+                  </form>
+                </div>
+              ) : (
+                <div className="flex flex-col gap-2 px-3">
+                  <Link href="/login" onClick={() => setMobileOpen(false)}>
+                    <Button variant="outline" size="lg" className="w-full">Sign in</Button>
+                  </Link>
+                  <Link href={INSTALL_URL} target="_blank" rel="noopener" onClick={() => setMobileOpen(false)}>
+                    <Button variant="glow" size="lg" className="w-full">Install free</Button>
+                  </Link>
+                </div>
+              ))}
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </header>
+  );
+}
+
+function MobileLink({
+  href,
+  external = false,
+  onSelect,
+  children,
+}: {
+  href: string;
+  external?: boolean;
+  onSelect: () => void;
+  children: React.ReactNode;
+}) {
+  return (
+    <Link
+      href={href}
+      onClick={onSelect}
+      target={external ? "_blank" : undefined}
+      rel={external ? "noopener" : undefined}
+      className="flex items-center gap-2 px-3 py-3 rounded-lg text-sm font-medium hover:bg-accent/40 transition-colors"
+    >
+      {children}
+    </Link>
   );
 }
 

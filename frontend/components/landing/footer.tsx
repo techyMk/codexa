@@ -1,6 +1,6 @@
 import Link from "next/link";
-import { Github } from "lucide-react";
 import { Logo } from "@/components/brand";
+import { GitHubIcon } from "@/components/icons/github";
 import { GITHUB_REPO_URL } from "@/lib/constants";
 
 export function Footer() {
@@ -42,7 +42,7 @@ export function Footer() {
             aria-label="GitHub"
             className="hover:text-foreground transition-colors"
           >
-            <Github className="h-4 w-4" />
+            <GitHubIcon className="h-4 w-4" />
           </Link>
         </div>
       </div>
